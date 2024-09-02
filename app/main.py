@@ -15,4 +15,4 @@ app.openapi = custom_openapi(app)
 
 if __name__ == "__main__":
     # Run the Uvicorn server to serve the FastAPI app
-    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8000)))
+    uvicorn.run(app, host="0.0.0.0", port=int(os.getenv("PORT", 8080)))

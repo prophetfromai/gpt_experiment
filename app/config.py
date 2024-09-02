@@ -16,7 +16,7 @@ def custom_openapi(app):
         openapi_schema = original_openapi().copy()
 
         # Retrieve the server URL from the environment variable
-        server_url = os.getenv("BASE_URL", "http://localhost:8000")  # Default to local URL if not set
+        server_url = os.getenv("BASE_URL", "http://localhost:8080")  # Default to local URL if not set
 
         openapi_schema["servers"] = [
             {

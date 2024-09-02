@@ -1,17 +1,42 @@
 # Define substitutions at the top
 substitutions:
-  _APP_NAME: 'my-custom-fastapi-app'
+  _APP_NAME: 'zactestnew'
+  _REGION: 'us-west2'
+  _SERVICE_ACCOUNT: 'cloud-run-deployer@zac-test-app-run.iam.gserviceaccount.com'
 
 steps:
-  # Step 1: Build the Docker image
+  # Step 1: Ensure the service account has the necessary roles
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Set required IAM roles for the service account
+        gcloud projects add-iam-policy-binding $PROJECT_ID \
+          --member="serviceAccount:${_SERVICE_ACCOUNT}" \
+          --role="roles/run.invoker"
+
+        gcloud projects add-iam-policy-binding $PROJECT_ID \
+          --member="serviceAccount:${_SERVICE_ACCOUNT}" \
+          --role="roles/run.admin"
+
+        gcloud projects add-iam-policy-binding $PROJECT_ID \
+          --member="serviceAccount:${_SERVICE_ACCOUNT}" \
+          --role="roles/storage.objectViewer"
+
+        gcloud projects add-iam-policy-binding $PROJECT_ID \
+          --member="serviceAccount:${_SERVICE_ACCOUNT}" \
+          --role="roles/iam.serviceAccountUser"
+
+  # Step 2: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/${_APP_NAME}:latest', '.']
 
-  # Step 2: Push the Docker image to Google Container Registry (GCR)
+  # Step 3: Push the Docker image to Google Container Registry (GCR)
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/${_APP_NAME}:latest']
 
-  # Step 3: Deploy the Docker image to Google Cloud Run
+  # Step 4: Deploy the Docker image to Google Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
@@ -20,10 +45,11 @@ steps:
       gcloud run deploy ${_APP_NAME} \
         --image gcr.io/$PROJECT_ID/${_APP_NAME}:latest \
         --platform managed \
-        --region us-west2 \
-        --allow-unauthenticated
+        --region ${_REGION} \
+        --allow-unauthenticated \
+        --service-account=${_SERVICE_ACCOUNT}
 
-  # Step 4: Update the environment variable using the canonical service URL directly
+  # Step 5: Update the environment variable using the canonical service URL directly
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
@@ -31,8 +57,8 @@ steps:
     - |
       gcloud run services update ${_APP_NAME} \
         --platform managed \
-        --region us-west2 \
-        --update-env-vars BASE_URL=$(gcloud run services describe ${_APP_NAME} --platform managed --region us-west2 --format="value(metadata.annotations['run.googleapis.com/urls'])" | sed 's/\[//g' | sed 's/\]//g' | cut -d ',' -f 1 | sed 's/"//g')
+        --region ${_REGION} \
+        --update-env-vars BASE_URL=$(gcloud run services describe ${_APP_NAME} --platform managed --region ${_REGION} --format="value(metadata.annotations['run.googleapis.com/urls'])" | sed 's/\[//g' | sed 's/\]//g' | cut -d ',' -f 1 | sed 's/"//g')
 
 images:
 - 'gcr.io/$PROJECT_ID/${_APP_NAME}:latest'
