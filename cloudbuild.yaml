@@ -1,11 +1,15 @@
+# Define substitutions at the top
+substitutions:
+  _APP_NAME: 'my-custom-fastapi-app'
+
 steps:
   # Step 1: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/fastapi-python312-app:latest', '.']
+    args: ['build', '-t', 'gcr.io/$PROJECT_ID/${_APP_NAME}:latest', '.']
 
   # Step 2: Push the Docker image to Google Container Registry (GCR)
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', 'gcr.io/$PROJECT_ID/fastapi-python312-app:latest']
+    args: ['push', 'gcr.io/$PROJECT_ID/${_APP_NAME}:latest']
 
   # Step 3: Deploy the Docker image to Google Cloud Run
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
@@ -13,8 +17,8 @@ steps:
     args:
     - '-c'
     - |
-      gcloud run deploy fastapi-python312-app \
-        --image gcr.io/$PROJECT_ID/fastapi-python312-app:latest \
+      gcloud run deploy ${_APP_NAME} \
+        --image gcr.io/$PROJECT_ID/${_APP_NAME}:latest \
         --platform managed \
         --region us-west2 \
         --allow-unauthenticated
@@ -25,10 +29,10 @@ steps:
     args:
     - '-c'
     - |
-      gcloud run services update fastapi-python312-app \
+      gcloud run services update ${_APP_NAME} \
         --platform managed \
         --region us-west2 \
-        --update-env-vars BASE_URL=$(gcloud run services describe fastapi-python312-app --platform managed --region us-west2 --format="value(metadata.annotations['run.googleapis.com/urls'])" | sed 's/\[//g' | sed 's/\]//g' | cut -d ',' -f 1 | sed 's/"//g')
+        --update-env-vars BASE_URL=$(gcloud run services describe ${_APP_NAME} --platform managed --region us-west2 --format="value(metadata.annotations['run.googleapis.com/urls'])" | sed 's/\[//g' | sed 's/\]//g' | cut -d ',' -f 1 | sed 's/"//g')
 
 images:
-- 'gcr.io/$PROJECT_ID/fastapi-python312-app:latest'
+- 'gcr.io/$PROJECT_ID/${_APP_NAME}:latest'
