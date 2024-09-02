@@ -65,3 +65,30 @@ or
 gcloud init
 gcloud builds submit --config cloudbuild.yaml .
 
+Service Account Creation
+```
+gcloud iam service-accounts create cloud-run-deployer \
+    --display-name "Cloud Run Deployer Service Account"
+
+gcloud iam service-accounts create app-runtime-sa \
+    --display-name "App Runtime Service Account"
+
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:cloud-run-deployer@$PROJECT_ID.iam.gserviceaccount.com" \
+    --role="roles/run.admin"
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:cloud-run-deployer@$PROJECT_ID.iam.gserviceaccount.com" \
+    --role="roles/iam.serviceAccountUser"
+
+
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:app-runtime-sa@$PROJECT_ID.iam.gserviceaccount.com" \
+    --role="roles/run.invoker"
+
+# Add any other necessary roles the runtime service account needs, for example:
+gcloud projects add-iam-policy-binding $PROJECT_ID \
+    --member="serviceAccount:app-runtime-sa@$PROJECT_ID.iam.gserviceaccount.com" \
+    --role="roles/storage.objectViewer"
+```

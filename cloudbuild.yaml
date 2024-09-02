@@ -2,41 +2,50 @@
 substitutions:
   _APP_NAME: 'zactestnew'
   _REGION: 'us-west2'
-  _SERVICE_ACCOUNT: 'cloud-run-deployer@zac-test-app-run.iam.gserviceaccount.com'
+  _DEPLOYER_SERVICE_ACCOUNT: 'cloud-run-deployer@zac-test-app-run.iam.gserviceaccount.com'
+  _RUNTIME_SERVICE_ACCOUNT: 'app-runtime-sa@zac-test-app-run.iam.gserviceaccount.com'
 
 steps:
-  # Step 1: Ensure the service account has the necessary roles
+  # Step 1: Ensure the deployer service account has the necessary roles
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
       - '-c'
       - |
-        # Set required IAM roles for the service account
+        # Set required IAM roles for the deployer service account
         gcloud projects add-iam-policy-binding $PROJECT_ID \
-          --member="serviceAccount:${_SERVICE_ACCOUNT}" \
-          --role="roles/run.invoker"
-
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-          --member="serviceAccount:${_SERVICE_ACCOUNT}" \
+          --member="serviceAccount:${_DEPLOYER_SERVICE_ACCOUNT}" \
           --role="roles/run.admin"
 
         gcloud projects add-iam-policy-binding $PROJECT_ID \
-          --member="serviceAccount:${_SERVICE_ACCOUNT}" \
-          --role="roles/storage.objectViewer"
-
-        gcloud projects add-iam-policy-binding $PROJECT_ID \
-          --member="serviceAccount:${_SERVICE_ACCOUNT}" \
+          --member="serviceAccount:${_DEPLOYER_SERVICE_ACCOUNT}" \
           --role="roles/iam.serviceAccountUser"
 
-  # Step 2: Build the Docker image
+  # Step 2: Ensure the runtime service account has the necessary roles
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        # Set required IAM roles for the runtime service account
+        gcloud projects add-iam-policy-binding $PROJECT_ID \
+          --member="serviceAccount:${_RUNTIME_SERVICE_ACCOUNT}" \
+          --role="roles/run.invoker"
+
+        # Add any other roles the runtime service account needs, e.g., access to Cloud Storage
+        gcloud projects add-iam-policy-binding $PROJECT_ID \
+          --member="serviceAccount:${_RUNTIME_SERVICE_ACCOUNT}" \
+          --role="roles/storage.objectViewer"
+
+  # Step 3: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/${_APP_NAME}:latest', '.']
 
-  # Step 3: Push the Docker image to Google Container Registry (GCR)
+  # Step 4: Push the Docker image to Google Container Registry (GCR)
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/${_APP_NAME}:latest']
 
-  # Step 4: Deploy the Docker image to Google Cloud Run
+  # Step 5: Deploy the Docker image to Google Cloud Run with the runtime service account
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
@@ -47,9 +56,9 @@ steps:
         --platform managed \
         --region ${_REGION} \
         --allow-unauthenticated \
-        --service-account=${_SERVICE_ACCOUNT}
+        --service-account=${_RUNTIME_SERVICE_ACCOUNT}
 
-  # Step 5: Update the environment variable using the canonical service URL directly
+  # Step 6: Update the environment variable using the canonical service URL directly
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: 'bash'
     args:
