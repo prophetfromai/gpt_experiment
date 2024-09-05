@@ -1,3 +1,12 @@
+"""
+This module is the main entry point for the FastAPI application.
+
+It initializes the FastAPI app, includes all the route definitions from different routers,
+and configures middleware, event handlers, and other application-level configurations.
+
+The application can be started by running this module with a WSGI server like Uvicorn.
+"""
+
 from fastapi import FastAPI
 from .routes import router  # Use relative import
 from .config import custom_openapi  # Use relative import
