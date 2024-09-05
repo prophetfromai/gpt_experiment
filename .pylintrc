@@ -3,7 +3,7 @@ disable=all  # Disable all messages by default
 enable=E,F  # Enable only error and fatal messages
 
 [REPORTS]
-score=no  # Disable scoring, so the output focuses on errors and warnings
+; score=no  # Disable scoring, so the output focuses on errors and warnings
 
 [FORMAT]
 max-line-length=100  # Example: customize the line length
