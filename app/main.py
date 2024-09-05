@@ -8,6 +8,7 @@ The application can be started by running this module with a WSGI server like Uv
 """
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 from .routes import router  # Use relative import
 from .config import custom_openapi  # Use relative import
 
@@ -22,3 +23,11 @@ app.include_router(router)
 
 # Set custom OpenAPI
 app.openapi = custom_openapi(app)
+
+# Redirect base URL to /docs
+@app.get("/", include_in_schema=False)  # include_in_schema=False hides it from the OpenAPI docs
+async def redirect_to_docs():
+    """
+    Redirects the base URL to the API documentation.
+    """
+    return RedirectResponse(url="/docs")
