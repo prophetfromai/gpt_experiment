@@ -3,7 +3,8 @@ from pydantic import BaseModel
 from typing import List
 
 # Create a router instance
-router = APIRouter()
+router = APIRouter(prefix="/shop",tags=["shop"])
+
 
 # Pydantic models
 class HelloWorldResponse(BaseModel):
