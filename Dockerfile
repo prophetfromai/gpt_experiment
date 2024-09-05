@@ -21,13 +21,7 @@ COPY --from=build-venv /venv /venv
 
 # Copy the FastAPI application code
 COPY ./app /app
+COPY start.py ./start.py
 
-# # Set the working directory
-# WORKDIR /app
-
-# Expose the port for FastAPI
-ENV PORT=8080
-EXPOSE 8080
-
-# Use ENTRYPOINT to run the FastAPI app with Uvicorn
-ENTRYPOINT ["/venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Start the app with uvicorn using python. Uses python to get env for port as distroless doesn't have sh or bash
+ENTRYPOINT ["/venv/bin/python3", "start.py"]
