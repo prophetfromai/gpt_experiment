@@ -3,6 +3,16 @@ substitutions:
   _REGION: 'us-west2'
 
 steps:
+  # Step 0: Lint the code using Pylint
+  - name: 'python:3.12-slim'  # Use an official Python image
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        pip install pylint  # Install Pylint
+        pip install -r requirements.txt
+        pylint app/*.py start.py  # Lint Python files in the `app` directory and `start.py`
+
   # Step 1: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID', '.']
