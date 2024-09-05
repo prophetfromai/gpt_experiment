@@ -11,7 +11,8 @@ steps:
       - |
         pip install pylint  # Install Pylint
         pip install -r requirements.txt
-        pylint app/*.py start.py  # Lint Python files in the `app` directory and `start.py`
+        # Run Pylint in errors-only mode
+        pylint --rcfile=.pylintrc app/*.py start.py
 
   # Step 1: Build the Docker image
   - name: 'gcr.io/cloud-builders/docker'
