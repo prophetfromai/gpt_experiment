@@ -5,7 +5,10 @@ import uvicorn
 import os
 
 # Initialize FastAPI app
-app = FastAPI()
+app = FastAPI(
+    title="My API",
+    version="1.0.0",  # Set your desired version here
+)
 
 # Include routes from routes.py
 app.include_router(router)

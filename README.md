@@ -113,5 +113,7 @@ gcloud config set project
 gcloud config set project zac-test-1
 gcloud builds submit --config cloudbuild.yaml .
 
+manually update to allow unauthenticated requests in the portal or add permissions from command line
 
 https://github.com/GoogleContainerTools/distroless/blob/main/examples/python3-requirements/Dockerfile
+python -m app.main
