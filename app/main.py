@@ -24,8 +24,10 @@ app.include_router(router)
 # Set custom OpenAPI
 app.openapi = custom_openapi(app)
 
+
 # Redirect base URL to /docs
-@app.get("/", include_in_schema=False)  # include_in_schema=False hides it from the OpenAPI docs
+@app.get("/", include_in_schema=False
+         )  # include_in_schema=False hides it from the OpenAPI docs
 async def redirect_to_docs():
     """
     Redirects the base URL to the API documentation.

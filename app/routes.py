@@ -100,6 +100,6 @@ def delete_item(item_id: int):
     """
     Endpoint to delete an item by ID.
     """
-    global items # pylint: disable=global-statement
+    global items  # pylint: disable=global-statement
     items = [item for item in items if item["id"] != item_id]
     return {"message": "Item deleted"}
