@@ -67,12 +67,20 @@ gcloud builds submit --config cloudbuild.yaml .
 
 Service Account Creation
 ```
+gcloud projects create zac-test-app-run-1
+
+# Fetch the current project ID from gcloud config
+PROJECT_ID=$(gcloud config get-value project)
+
+gcloud beta billing projects describe $PROJECT_ID
+gcloud beta billing accounts list
+gcloud beta billing projects link zac-test-app-run-1 --billing-account=01ABD0-61BB11-AAACA0
+
+gsutil mb -p $PROJECT_ID gs://zac-test-app-run-1_cloudbuild
+
+
 gcloud iam service-accounts create cloud-run-deployer \
     --display-name "Cloud Run Deployer Service Account"
-
-gcloud iam service-accounts create app-runtime-sa \
-    --display-name "App Runtime Service Account"
-
 
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:cloud-run-deployer@$PROJECT_ID.iam.gserviceaccount.com" \
@@ -83,6 +91,9 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --role="roles/iam.serviceAccountUser"
 
 
+gcloud iam service-accounts create app-runtime-sa \
+    --display-name "App Runtime Service Account"
+
 gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:app-runtime-sa@$PROJECT_ID.iam.gserviceaccount.com" \
     --role="roles/run.invoker"
@@ -92,3 +103,15 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --member="serviceAccount:app-runtime-sa@$PROJECT_ID.iam.gserviceaccount.com" \
     --role="roles/storage.objectViewer"
 ```
+
+
+gcloud auth application-default login
+gcloud auth list
+gcloud config set account zachary.gander@prophetfrom.ai
+gcloud projects list
+gcloud config set project
+gcloud config set project zac-test-1
+gcloud builds submit --config cloudbuild.yaml .
+
+
+https://github.com/GoogleContainerTools/distroless/blob/main/examples/python3-requirements/Dockerfile

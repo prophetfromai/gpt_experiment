@@ -1,18 +1,33 @@
-# Use a slim Python image as the base image
-FROM python:3.12-slim
+# Build a virtualenv using the appropriate Debian release
+# * Install python3-venv for the built-in Python3 venv module (not installed by default)
+# * Install gcc libpython3-dev to compile C Python modules
+# * In the virtualenv: Update pip setuputils and wheel to support building new packages
+FROM debian:12-slim AS build
+RUN apt-get update && \
+    apt-get install --no-install-suggests --no-install-recommends --yes python3-venv gcc libpython3-dev && \
+    python3 -m venv /venv && \
+    /venv/bin/pip install --upgrade pip setuptools wheel
 
-# Set the working directory in the container
-WORKDIR /app
+# Build the virtualenv as a separate step: Only re-execute this step when requirements.txt changes
+FROM build AS build-venv
+COPY requirements.txt /requirements.txt
+RUN /venv/bin/pip install --disable-pip-version-check -r /requirements.txt
 
-# Copy the requirements file and install dependencies
-COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+# Copy the virtualenv and FastAPI app into a distroless image
+FROM gcr.io/distroless/python3-debian12
 
-# Copy the FastAPI application code to the container
-COPY ./app ./app
+# Copy the virtual environment from the build stage
+COPY --from=build-venv /venv /venv
 
-# Expose the application port
+# Copy the FastAPI application code
+COPY ./app /app
+
+# # Set the working directory
+# WORKDIR /app
+
+# Expose the port for FastAPI
+ENV PORT=8080
 EXPOSE 8080
 
-# Run the Uvicorn server directly
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
+# Use ENTRYPOINT to run the FastAPI app with Uvicorn
+ENTRYPOINT ["/venv/bin/uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8080"]
