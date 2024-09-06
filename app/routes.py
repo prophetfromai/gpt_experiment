@@ -12,7 +12,7 @@ Pydantic models are used for data validation and serialization.
 """
 
 from typing import List
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
 # Create a router instance with a prefix and tags for grouping
@@ -65,12 +65,58 @@ def hello_world():
     return {"message": "OK"}
 
 
-@router.get("/items", response_model=List[Item])
-def get_items():
+@router.get("/items", response_model=List[dict])
+def get_items(request: Request):
     """
-    Endpoint to get a list of all items.
+    Endpoint to get a list of all items, along with request information.
     """
-    return items
+    
+    # Extracting headers
+    headers = dict(request.headers)
+    
+    # Extracting query parameters
+    query_params = dict(request.query_params)
+    
+    # Extracting method
+    method = request.method
+    
+    # Extracting client's IP address (best effort via 'client' tuple)
+    client_host = request.client.host if request.client else "Unknown"
+    
+    # Extracting cookies
+    cookies = request.cookies
+    
+    # Extracting URL path
+    url_path = request.url.path
+    
+    # Extracting full URL
+    full_url = str(request.url)
+    
+    # Extracting scheme (HTTP or HTTPS)
+    scheme = request.url.scheme
+    
+    # Extracting the HTTP version
+    http_version = request.scope["http_version"]
+    
+    # Request scope information (ASGI scope)
+    scope = request.scope
+    
+    # Return all the collected information
+    return {
+        "message": "Request details",
+        "headers": headers,
+        "query_params": query_params,
+        "method": method,
+        "client_ip": client_host,
+        "cookies": cookies,
+        "url_path": url_path,
+        "full_url": full_url,
+        "scheme": scheme,
+        "http_version": http_version,
+        "scope": scope,
+        "items": items,
+    }
+
 
 
 @router.post("/items", response_model=Item)
