@@ -13,10 +13,14 @@
 			]
 		}
 	},
+	"features": {
+    	"ghcr.io/dhoeric/features/google-cloud-cli:1": {}
+	},
   
-	"forwardPorts": [8080,11434],  // Example port forwarding for web servers
+	"forwardPorts": [8080],  // Example port forwarding for web servers
   
-	"postCreateCommand": "[ -f install_gcloud.sh ] && chmod +x install_gcloud.sh && /bin/bash ./install_gcloud.sh || echo 'install_gcloud.sh not found' || pip install --upgrade pip && pip install -r requirements.txt" ,
+	// "postCreateCommand": "[ -f install_gcloud.sh ] && chmod +x install_gcloud.sh && /bin/bash ./install_gcloud.sh || echo 'install_gcloud.sh not found' || pip install --upgrade pip && pip install -r requirements.txt" ,
+	"postCreateCommand": "pip install --upgrade pip && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt",
 	"mounts": [
 		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind"
 	]
