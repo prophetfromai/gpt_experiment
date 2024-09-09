@@ -11,14 +11,31 @@ It includes endpoints for:
 Pydantic models are used for data validation and serialization.
 """
 
-from typing import List
-from fastapi import APIRouter, Request
+from typing import List, Dict, Any, Union
+from fastapi import APIRouter, Request, FastAPI
 from pydantic import BaseModel
+import types
 
 # Create a router instance with a prefix and tags for grouping
 router = APIRouter(prefix="/shop", tags=["shop"])
 
-# Pydantic models
+
+# Define the Pydantic model
+class RequestDetails(BaseModel):
+    message: str
+    headers: Dict[str, str]
+    query_params: Dict[str, str]
+    method: str
+    client_ip: str
+    cookies: Dict[str, str]
+    url_path: str
+    full_url: str
+    scheme: str
+    http_version: str
+    scope: Dict[str, Any]  # Scope may contain complex data, we'll filter this
+    items: List[Dict[str,
+                     Union[str,
+                           int]]]  # Adjust for items that could be int or str
 
 
 class HelloWorldResponse(BaseModel):
@@ -65,58 +82,44 @@ def hello_world():
     return {"message": "OK"}
 
 
-@router.get("/items", response_model=List[dict])
-def get_items(request: Request):
-    """
-    Endpoint to get a list of all items, along with request information.
-    """
-    
-    # Extracting headers
-    headers = dict(request.headers)
-    
-    # Extracting query parameters
+# Define the FastAPI route to return this response
+@router.get("/request-details", response_model=RequestDetails)
+async def get_request_details(request: Request):
+    headers = {k: v for k, v in request.headers.items()}
     query_params = dict(request.query_params)
-    
-    # Extracting method
     method = request.method
-    
-    # Extracting client's IP address (best effort via 'client' tuple)
-    client_host = request.client.host if request.client else "Unknown"
-    
-    # Extracting cookies
+    client_ip = request.client.host
     cookies = request.cookies
-    
-    # Extracting URL path
     url_path = request.url.path
-    
-    # Extracting full URL
     full_url = str(request.url)
-    
-    # Extracting scheme (HTTP or HTTPS)
     scheme = request.url.scheme
-    
-    # Extracting the HTTP version
-    http_version = request.scope["http_version"]
-    
-    # Request scope information (ASGI scope)
-    scope = request.scope
-    
-    # Return all the collected information
-    return {
-        "message": "Request details",
-        "headers": headers,
-        "query_params": query_params,
-        "method": method,
-        "client_ip": client_host,
-        "cookies": cookies,
-        "url_path": url_path,
-        "full_url": full_url,
-        "scheme": scheme,
-        "http_version": http_version,
-        "scope": scope,
-        "items": items,
+    http_version = request.scope.get("http_version")
+
+    # Filter out non-serializable objects like FastAPI instances, APIRouter, and function types
+    scope = {
+        key:
+        str(value) if isinstance(value,
+                                 (tuple, dict, list, str, int)) else None
+        for key, value in request.scope.items()
+        if not isinstance(value, (FastAPI, APIRouter, type, types.FunctionType
+                                  ))  # Exclude functions and internal objects
     }
 
+    # Items example
+    items = [{"id": 1}, {"id": 2}]  # Replace with actual items logic
+
+    return RequestDetails(message="Request details",
+                          headers=headers,
+                          query_params=query_params,
+                          method=method,
+                          client_ip=client_ip,
+                          cookies=cookies,
+                          url_path=url_path,
+                          full_url=full_url,
+                          scheme=scheme,
+                          http_version=http_version,
+                          scope=scope,
+                          items=items)
 
 
 @router.post("/items", response_model=Item)
