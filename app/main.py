@@ -13,7 +13,7 @@ You can run this script using a command-line tool like Uvicorn, which is a serve
 
 # Here we import some pieces of code from FastAPI and other places in our project that we need.
 from fastapi import FastAPI  # FastAPI library to create our application
-from fastapi.responses import RedirectResponse  # FastAPI utility to handle redirections
+from fastapi.responses import RedirectResponse, PlainTextResponse  # FastAPI utility to handle redirections and return plan text for privacy policy
 from .routes import router  # Importing 'router' which handles different web pages/sections from another file
 from .config import custom_openapi  # Importing a custom function to change the default setup of our API documentation
 
@@ -44,3 +44,13 @@ async def redirect_to_docs():
     return RedirectResponse(
         url="/docs"
     )  # This line does the actual redirecting to the '/docs' page.
+
+# A function to provide a privacy policy to ChatGPT to allow us to make our Custom GPT public
+@app.get("/privacy", response_class=PlainTextResponse)
+async def get_privacy_policy():
+    return """
+    Privacy Policy
+
+    This is the privacy policy for our application. We respect your privacy and ensure that your data is protected. 
+    We do not share personal information with third parties, except as necessary to provide our services.
+    """
