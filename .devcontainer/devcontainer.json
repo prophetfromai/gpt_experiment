@@ -10,7 +10,10 @@
 				"ms-python.pylint",
 				"eeyore.yapf",
 				"ms-python.vscode-pylance"
-			]
+			],
+			"settings": {
+				"python.defaultInterpreterPath": "./venv/bin/python"  // Automatically uses the virtual environment's Python interpreter
+			}
 		}
 	},
 	"features": {
