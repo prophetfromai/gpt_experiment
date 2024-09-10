@@ -20,10 +20,7 @@
 				"ms-python.pylint",  // Linting extension for Python using Pylint.
 				"eeyore.yapf",  // YAPF extension for Python code formatting.
 				"ms-python.vscode-pylance"  // Pylance extension for enhanced Python IntelliSense (code completion, type checking).
-			],
-			"settings": {
-				"python.defaultInterpreterPath": "./venv/bin/python"  // Configures VS Code to use the Python interpreter from the virtual environment (venv).
-			}
+			]
 		}
 	},
 
