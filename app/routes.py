@@ -19,29 +19,41 @@ from pydantic import BaseModel  # BaseModel is from Pydantic, used to define dat
 # Create a router object that will handle paths prefixed with "/shop"
 router = APIRouter(prefix="/shop", tags=["shop"])
 
+
 # Define data models using Pydantic
 class HelloWorldResponse(BaseModel):
     """Model for a hello world response message."""
     message: str  # Field for the message
+
 
 class Item(BaseModel):
     """Model representing an item in the shop with an id and a name."""
     id: int  # Unique identifier for the item
     name: str  # Name of the item
 
+
 class ItemCreateRequest(BaseModel):
     """Data model for the payload needed to create an item, only needs a name."""
     name: str
+
 
 class ItemUpdateRequest(BaseModel):
     """Data model for updating an item's name."""
     name: str
 
+
 # Initialize sample data, simulating a database of items
 items = [
-    {"id": 1, "name": "Item 1"},
-    {"id": 2, "name": "Item 2"},
+    {
+        "id": 1,
+        "name": "Item 1"
+    },
+    {
+        "id": 2,
+        "name": "Item 2"
+    },
 ]
+
 
 # Define API endpoints
 @router.get("/", response_model=HelloWorldResponse)
@@ -51,12 +63,14 @@ def hello_world():
     """
     return {"message": "Hello, world!"}
 
+
 @router.get("/items", response_model=List[Item])
 def get_all_items():
     """
     Retrieves all items currently available in the shop. This demonstrates how to return a list of items.
     """
     return items  # Returns the list of items
+
 
 @router.post("/items", response_model=Item)
 def create_item(item: ItemCreateRequest):
@@ -66,6 +80,7 @@ def create_item(item: ItemCreateRequest):
     new_item = {"id": len(items) + 1, "name": item.name}
     items.append(new_item)
     return new_item
+
 
 @router.put("/items/{item_id}", response_model=Item)
 def update_item(item_id: int, item: ItemUpdateRequest):
@@ -78,6 +93,7 @@ def update_item(item_id: int, item: ItemUpdateRequest):
             return items[index]
     return {"error": "Item not found"}, 404
 
+
 @router.delete("/items/{item_id}", response_model=HelloWorldResponse)
 def delete_item(item_id: int):
     """
@@ -86,4 +102,3 @@ def delete_item(item_id: int):
     global items  # Necessary for modifying the list within this function
     items = [item for item in items if item["id"] != item_id]
     return {"message": "Item deleted"}
-

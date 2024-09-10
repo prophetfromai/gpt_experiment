@@ -8,6 +8,7 @@ documentation or any other custom configurations for the application.
 # Import necessary modules from the standard library
 import os  # os module is used to read environment variables from the operating system.
 
+
 def custom_openapi(app):
     """
     Returns a custom OpenAPI schema generation function for the provided FastAPI app.
@@ -16,6 +17,7 @@ def custom_openapi(app):
 
     # Store the original OpenAPI method
     original_openapi = app.openapi
+
     # This variable keeps a reference to the original `openapi` method of the FastAPI app,
     # which generates the default OpenAPI schema.
 
@@ -39,8 +41,10 @@ def custom_openapi(app):
 
         # Add a custom server object to the OpenAPI schema
         openapi_schema["servers"] = [{
-            "url": server_url,
-            "description": "Production server" if "run.app" in server_url else "Local server"
+            "url":
+            server_url,
+            "description":
+            "Production server" if "run.app" in server_url else "Local server"
         }]
         # This block modifies the `servers` section of the OpenAPI schema to include the retrieved server URL.
         # It also sets a description based on whether the URL includes "run.app", distinguishing between
