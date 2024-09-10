@@ -6,7 +6,7 @@ This README provides a comprehensive guide on how to deploy a FastAPI applicatio
 
 Before you start, ensure you have the following:
 - Docker installed (for running devcontainers)
-- VS Code with the **Remote - Containers** extension or another tool that supports devcontainers
+- VS Code with the **Dev Containers** extension installed
 - Access to a Google Cloud project
 
 ## Devcontainer Setup
