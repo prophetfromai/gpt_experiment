@@ -61,6 +61,29 @@ Before you start, ensure you have the following:
       --role="roles/run.invoker"
       ```
 
+## Adding the API as an Action to CustomGPT
+
+To integrate this FastAPI application as an 'Action' in CustomGPT, follow these steps:
+
+1. **Deploy the FastAPI Application**:  
+   Ensure the FastAPI application is successfully deployed to Google Cloud Run, and you have access to the service URL. 
+
+2. **Access the OpenAPI JSON**:  
+   Once the application is running, retrieve the OpenAPI JSON specification by appending `/openapi.json` to your Cloud Run service URL. For example, if your service URL is `https://your-service-name.run.app`, the OpenAPI spec will be available at: `https://your-service-name.run.app/openapi.json`
+
+3. **Copy the OpenAPI JSON**:  
+Open the URL in your browser and copy the entire JSON content displayed.
+
+4. **Add the API to CustomGPT**:
+- Navigate to the CustomGPT platform.
+- Go to the section where you can configure API Actions.
+- Paste the copied JSON from the `/openapi.json` file into the required field.
+
+5. **Test the Integration**:  
+After pasting the OpenAPI JSON, save the configuration and test your CustomGPT setup to ensure that the API actions are working as expected.
+
+> **Note:** Make sure to copy the entire JSON content from the `/openapi.json` URL, not just the URL itself. This ensures CustomGPT can correctly interpret and register the API endpoints.
+
 ## Local Development with Devcontainers
 
 1. **Run the Application Locally**:
@@ -96,3 +119,4 @@ Before you start, ensure you have the following:
 
 - Ensure that you are in the correct directory and have the necessary permissions set before running the deployment commands.
 - When using **devcontainers**, all dependencies and configurations should be contained within the container, ensuring consistency across environments.
+
