@@ -71,6 +71,8 @@ Before you start, ensure you have the following:
 
     - The devcontainer exposes port `8080` to your local machine, so you can access the running app by navigating to `http://localhost:8080` on your browser.
 
+    - OR just find the start.py file and run it in VSCode. This will start the app as above from the correct folder so relative imports work. 
+
 2. **Testing and Debugging in the Devcontainer**:
     - You can run tests and use debugging tools directly in your devcontainer. Ensure your testing framework (e.g., `pytest`) is installed:
       ```bash
