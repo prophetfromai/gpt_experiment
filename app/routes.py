@@ -1,141 +1,76 @@
 """
-This module defines API routes for the 'shop' service.
+This module defines API routes for a 'shop' service within a web application.
 
-It includes endpoints for:
-- Retrieving a hello world message
-- Retrieving all items
-- Creating a new item
-- Updating an existing item
-- Deleting an item
+It includes endpoints for various operations:
+- Retrieving a simple hello world message.
+- Retrieving all items in the shop.
+- Creating a new item.
+- Updating an existing item.
+- Deleting an item.
 
-Pydantic models are used for data validation and serialization.
+We use Pydantic models for data validation and serialization, which helps in ensuring the data passed to and from the API matches our expectations.
 """
 
-from typing import List, Dict, Any, Union
-from fastapi import APIRouter, Request, FastAPI
-from pydantic import BaseModel
-import types
+# Import necessary libraries and classes
+from typing import List
+from fastapi import APIRouter  # APIRouter is used to manage different routes
+from pydantic import BaseModel  # BaseModel is from Pydantic, used to define data models
 
-# Create a router instance with a prefix and tags for grouping
+# Create a router object that will handle paths prefixed with "/shop"
 router = APIRouter(prefix="/shop", tags=["shop"])
 
-
-# Define the Pydantic model
-class RequestDetails(BaseModel):
-    message: str
-    headers: Dict[str, str]
-    query_params: Dict[str, str]
-    method: str
-    client_ip: str
-    cookies: Dict[str, str]
-    url_path: str
-    full_url: str
-    scheme: str
-    http_version: str
-    scope: Dict[str, Any]  # Scope may contain complex data, we'll filter this
-    items: List[Dict[str,
-                     Union[str,
-                           int]]]  # Adjust for items that could be int or str
-
-
+# Define data models using Pydantic
 class HelloWorldResponse(BaseModel):
     """Model for a hello world response message."""
-    message: str
-
+    message: str  # Field for the message
 
 class Item(BaseModel):
-    """Model for an item with id and name."""
-    id: int
-    name: str
-
+    """Model representing an item in the shop with an id and a name."""
+    id: int  # Unique identifier for the item
+    name: str  # Name of the item
 
 class ItemCreateRequest(BaseModel):
-    """Model for item creation request with a name."""
+    """Data model for the payload needed to create an item, only needs a name."""
     name: str
-
 
 class ItemUpdateRequest(BaseModel):
-    """Model for item update request with a name."""
+    """Data model for updating an item's name."""
     name: str
 
-
-# Sample data
+# Initialize sample data, simulating a database of items
 items = [
-    {
-        "id": 1,
-        "name": "Item 1"
-    },
-    {
-        "id": 2,
-        "name": "Item 2"
-    },
+    {"id": 1, "name": "Item 1"},
+    {"id": 2, "name": "Item 2"},
 ]
 
-# Define routes
-
-
+# Define API endpoints
 @router.get("/", response_model=HelloWorldResponse)
 def hello_world():
     """
-    Endpoint to return a simple hello world message.
+    Returns a simple hello world message. This is a basic endpoint to demonstrate an API response.
     """
-    return {"message": "OK"}
+    return {"message": "Hello, world!"}
 
-
-# Define the FastAPI route to return this response
-@router.get("/request-details", response_model=RequestDetails)
-async def get_request_details(request: Request):
-    headers = {k: v for k, v in request.headers.items()}
-    query_params = dict(request.query_params)
-    method = request.method
-    client_ip = request.client.host
-    cookies = request.cookies
-    url_path = request.url.path
-    full_url = str(request.url)
-    scheme = request.url.scheme
-    http_version = request.scope.get("http_version")
-
-    # Filter out non-serializable objects like FastAPI instances, APIRouter, and function types
-    scope = {
-        key:
-        str(value) if isinstance(value,
-                                 (tuple, dict, list, str, int)) else None
-        for key, value in request.scope.items()
-        if not isinstance(value, (FastAPI, APIRouter, type, types.FunctionType
-                                  ))  # Exclude functions and internal objects
-    }
-
-    # Items example
-    items = [{"id": 1}, {"id": 2}]  # Replace with actual items logic
-
-    return RequestDetails(message="Request details",
-                          headers=headers,
-                          query_params=query_params,
-                          method=method,
-                          client_ip=client_ip,
-                          cookies=cookies,
-                          url_path=url_path,
-                          full_url=full_url,
-                          scheme=scheme,
-                          http_version=http_version,
-                          scope=scope,
-                          items=items)
-
+@router.get("/items", response_model=List[Item])
+def get_all_items():
+    """
+    Retrieves all items currently available in the shop. This demonstrates how to return a list of items.
+    """
+    return items  # Returns the list of items
 
 @router.post("/items", response_model=Item)
 def create_item(item: ItemCreateRequest):
     """
-    Endpoint to create a new item.
+    Creates a new item in the shop with the provided name. Demonstrates handling POST requests and data creation.
     """
     new_item = {"id": len(items) + 1, "name": item.name}
     items.append(new_item)
     return new_item
 
-
 @router.put("/items/{item_id}", response_model=Item)
 def update_item(item_id: int, item: ItemUpdateRequest):
     """
-    Endpoint to update an existing item by ID.
+    Updates an existing item by its ID with a new name. Demonstrates handling PUT requests and data updating.
     """
     for index, current_item in enumerate(items):
         if current_item["id"] == item_id:
@@ -143,12 +78,12 @@ def update_item(item_id: int, item: ItemUpdateRequest):
             return items[index]
     return {"error": "Item not found"}, 404
 
-
 @router.delete("/items/{item_id}", response_model=HelloWorldResponse)
 def delete_item(item_id: int):
     """
-    Endpoint to delete an item by ID.
+    Deletes an item by ID from the shop. Demonstrates how to handle DELETE requests and remove data.
     """
-    global items  # pylint: disable=global-statement
+    global items  # Necessary for modifying the list within this function
     items = [item for item in items if item["id"] != item_id]
     return {"message": "Item deleted"}
+
