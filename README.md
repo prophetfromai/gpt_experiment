@@ -119,4 +119,4 @@ After pasting the OpenAPI JSON, save the configuration and test your CustomGPT s
 
 - Ensure that you are in the correct directory and have the necessary permissions set before running the deployment commands.
 - When using **devcontainers**, all dependencies and configurations should be contained within the container, ensuring consistency across environments.
-
+- Add a custom domain `https://cloud.google.com/run/docs/mapping-custom-domains?hl=en`
