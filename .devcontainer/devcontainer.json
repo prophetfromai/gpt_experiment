@@ -1,31 +1,42 @@
 {
-	"name": "Python with Google Cloud SDK",
-	"image": "mcr.microsoft.com/devcontainers/python:3.12",  // Python dev container image
-	"customizations": {
-		"vscode": {
+	"name": "Python with Google Cloud SDK",  // The name of the development environment (used for identification purposes).
+
+	"image": "mcr.microsoft.com/devcontainers/python:3.12",  // Base image for the devcontainer. 
+	// The 'mcr.microsoft.com/devcontainers' namespace provides official, maintained, and pre-configured images from Microsoft for various development environments.
+	// These images are optimized for development in containers and come with essential tools and settings for specific languages (like Python in this case), ensuring a consistent environment across machines.
+	// Common extras in the Python image:
+	// - Python and pip: Pre-installed Python 3.12 and pip for package management.
+	// - git: Version control system pre-installed for managing your code repository.
+	// - curl and wget: Tools for downloading files from the internet.
+	// - build-essential: A package with tools like gcc, make, and libc6-dev for compiling code.
+	// - python-dev: Development headers required for compiling Python C extensions (useful for libraries like numpy).
+
+	"customizations": {  // Customizes the development environment (VS Code extensions, settings, etc.).
+		"vscode": {  // Settings and extensions specifically for VS Code.
 			"extensions": [
-				"ms-azuretools.vscode-docker",
-				"ms-python.python",
-				"redhat.vscode-yaml",
-				"ms-python.pylint",
-				"eeyore.yapf",
-				"ms-python.vscode-pylance"
+				"ms-azuretools.vscode-docker",  // Docker extension to manage Docker containers directly from VS Code.
+				"ms-python.python",  // Python extension for working with Python files (linting, debugging, etc.).
+				"redhat.vscode-yaml",  // YAML support for VS Code (syntax highlighting and validation).
+				"ms-python.pylint",  // Linting extension for Python using Pylint.
+				"eeyore.yapf",  // YAPF extension for Python code formatting.
+				"ms-python.vscode-pylance"  // Pylance extension for enhanced Python IntelliSense (code completion, type checking).
 			],
 			"settings": {
-				"python.defaultInterpreterPath": "./venv/bin/python"  // Automatically uses the virtual environment's Python interpreter
+				"python.defaultInterpreterPath": "./venv/bin/python"  // Configures VS Code to use the Python interpreter from the virtual environment (venv).
 			}
 		}
 	},
-	"features": {
-    	"ghcr.io/dhoeric/features/google-cloud-cli:1": {}
+
+	"features": {  // Features are used to install specific tools or SDKs within the container.
+    	"ghcr.io/dhoeric/features/google-cloud-cli:1": {}  // Installs the Google Cloud CLI feature, enabling Google Cloud SDK commands inside the devcontainer.
 	},
   
-	"forwardPorts": [8080],  // Example port forwarding for web servers
+	"forwardPorts": [8080],  // Exposes port 8080 from the container to your local machine, commonly used for web servers running inside the container.
   
 	// "postCreateCommand": "[ -f install_gcloud.sh ] && chmod +x install_gcloud.sh && /bin/bash ./install_gcloud.sh || echo 'install_gcloud.sh not found' || pip install --upgrade pip && pip install -r requirements.txt" ,
-	"postCreateCommand": "pip install --upgrade pip && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt",
-	"mounts": [
-		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind"
-	]
+	"postCreateCommand": "pip install --upgrade pip && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt",  // A command that runs after the container is created. This one upgrades pip, sets up a Python virtual environment (venv), and installs required packages from `requirements.txt`.
 
-  }
+	"mounts": [  // Binds local file paths on your machine to paths inside the container.
+		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind"  // Mounts the local `.ssh` directory from your home folder into the container's `/home/vscode/.ssh` folder, allowing access to SSH keys inside the container.
+	]
+}
