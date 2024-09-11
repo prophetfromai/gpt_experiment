@@ -19,3 +19,8 @@ async def verify_firebase_token(authorization: Annotated[str, Header()]):
 
     except Exception as e:
         raise HTTPException(status_code=401, detail=f"Invalid token or verification failed: {str(e)}")
+
+# from the browser to get the token
+# const token = localStorage.getItem('firebaseToken');
+# const authHeader = `Bearer ${token}`;
+# console.log('Authorization token for Swagger:', authHeader);
