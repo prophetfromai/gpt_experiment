@@ -34,32 +34,30 @@ Before you start, ensure you have the following:
 ## Setup Instructions
 
 1. **Authenticate with Google Cloud**:
-    - Since the Google Cloud SDK is already installed in the devcontainer, authenticate using:
+    - Authenticate using your Google account to enable CLI commands:
     ```bash
-    gcloud auth application-default login  # Logs in with your Google account credentials and sets them as default for the CLI.
-    gcloud auth list  # Lists all the Google accounts authenticated on this machine.
-    gcloud config set account zachary.gander@prophetfrom.ai  # Sets the specific account to use for the GCP CLI.
+    gcloud auth login  # Authenticate for Google Cloud CLI commands
     ```
 
-2. **Configure Google Cloud SDK**:
+2. **Set the Active Project**:
+    - Configure the project to which your builds and deployments will be associated:
     ```bash
-    gcloud projects list  # Lists all Google Cloud projects accessible with your account.
-    gcloud config set project zac-test-1  # Sets the current working project to 'zac-test-1'.
+    gcloud config set project zac-test-1  # Set your active project
     ```
 
-3. **Deploy the Application**:
-    - Once the project is configured, deploy the FastAPI application using Cloud Build:
+3. **Submit the Build**:
+    - Deploy the FastAPI application using Cloud Build:
     ```bash
-    gcloud builds submit --config cloudbuild.yaml .  # Submits a build to Google Cloud Build using the configuration specified in 'cloudbuild.yaml'.
+    gcloud builds submit --config cloudbuild.yaml .  # Submits the build using 'cloudbuild.yaml'
     ```
 
-4. **Update Permissions**:
-    - You can manually allow unauthenticated requests in the Google Cloud Console or run this command to allow public access:
-      ```bash
-      gcloud run services add-iam-policy-binding your-service-name \
-      --member="allUsers" \
-      --role="roles/run.invoker"
-      ```
+4. **Allow Unauthenticated Access (Optional)**:
+    - To allow public (unauthenticated) access to the service in Cloud Run:
+    ```bash
+    gcloud run services add-iam-policy-binding your-service-name \
+    --member="allUsers" \
+    --role="roles/run.invoker"
+    ```
 
 ## Adding the API as an Action to CustomGPT
 
