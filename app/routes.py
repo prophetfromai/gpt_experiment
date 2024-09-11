@@ -1,11 +1,18 @@
 from typing import List
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from app.auth import verify_firebase_token  
+from app.auth import verify_firebase_token 
+from app.dependencies import get_firestore_client
+from google.cloud import firestore
 
 # Create a router object that will handle paths prefixed with "/shop"
 router = APIRouter(prefix="/shop", tags=["shop"])
 
+# Define a Pydantic model for the user data
+class UserData(BaseModel):
+    name: str
+    email: str
+    age: int
 
 # Define data models using Pydantic
 class HelloWorldResponse(BaseModel):
@@ -93,3 +100,31 @@ def delete_item(item_id: int, user_info: dict = Depends(verify_firebase_token)):
     global items  # Necessary for modifying the list within this function
     items = [item for item in items if item["id"] != item_id]
     return {"message": "Item deleted"}
+
+
+@router.post("/add_user")
+async def add_user(user_data: UserData,  # Request body will automatically map to this Pydantic model
+                   user_info: dict = Depends(verify_firebase_token), 
+                   db: firestore.Client = Depends(get_firestore_client)):
+    # Extract the authenticated user's UID from the verified Firebase token
+    user_id = user_info["uid"]
+
+    # Add data to Firestore under the user's UID
+    db.collection('users').document(user_id).set(user_data.model_dump())  # Convert the Pydantic model to a dictionary
+
+    return {"status": "success", "user_id": user_id, "data": user_data.model_dump()}
+
+@router.get("/get_user_data")
+async def get_user_data(user_info: dict = Depends(verify_firebase_token), 
+                        db: firestore.Client = Depends(get_firestore_client)):
+    # Extract the authenticated user's UID from the verified Firebase token
+    user_id = user_info["uid"]
+
+    # Retrieve the user's document from the "users" collection
+    user_doc = db.collection('users').document(user_id).get()
+
+    # Check if the document exists and return the data
+    if user_doc.exists:
+        return {"status": "success", "data": user_doc.to_dict()}
+    else:
+        return {"status": "error", "message": "User data not found"}
