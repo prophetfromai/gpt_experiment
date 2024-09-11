@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Load Firebase SDK from CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+<h1>Login with Google</h1>
+<button id="loginBtn">Login with Google</button>
+
+<p id="message"></p>
+
+<script>
+// Firebase config object
+const firebaseConfig = {
+  apiKey: "AIzaSyA1FZMI0epujA1YhZx4jI4eFGnEqkOtkho",
+  authDomain: "gcp-test-app-e7f7f.firebaseapp.com",
+  projectId: "gcp-test-app-e7f7f",
+  storageBucket: "gcp-test-app-e7f7f.appspot.com",
+  messagingSenderId: "322875975516",
+  appId: "1:322875975516:web:a72ea02092e651a0234399",
+  measurementId: "G-CQF6Y4GB5K"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+
+// Google sign-in button logic
+document.getElementById('loginBtn').addEventListener('click', async () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    try {
+        // Sign in with Google and get the ID token
+        const result = await auth.signInWithPopup(provider);
+        const idToken = await result.user.getIdToken();
+
+        // Send the token to the FastAPI backend
+        const response = await fetch('/dashboard', {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${idToken}`  // Pass the token in the Authorization header
+            }
+        });
+
+        const data = await response.json();
+        document.getElementById('message').innerText = data.message || data.detail;
+
+    } catch (error) {
+        document.getElementById('message').innerText = 'Login failed';
+    }
+});
+</script>
+
+</body>
+</html>
