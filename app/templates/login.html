@@ -39,7 +39,10 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
         const result = await auth.signInWithPopup(provider);
         const idToken = await result.user.getIdToken();
 
-        // Send the token to the FastAPI backend
+        // Store the token in localStorage for persistent login
+        localStorage.setItem('firebaseToken', idToken);
+
+        // Send the token to the FastAPI backend (optional, depends on your backend routes)
         const response = await fetch('/dashboard', {
             method: 'GET',
             headers: {
@@ -52,8 +55,20 @@ document.getElementById('loginBtn').addEventListener('click', async () => {
 
     } catch (error) {
         document.getElementById('message').innerText = 'Login failed';
+        console.error("Login error:", error);
     }
 });
+
+// Check for existing token in localStorage on page load
+window.onload = () => {
+    const token = localStorage.getItem('firebaseToken');
+    if (token) {
+        console.log('User is already logged in with token:', token);
+        // Optionally, you can auto-fill or use this token in the app
+    } else {
+        console.log('No user is logged in');
+    }
+};
 </script>
 
 </body>
