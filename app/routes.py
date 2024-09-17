@@ -4,7 +4,6 @@ This module defines API routes for the 'shop' service.
 Pydantic models are used for data validation and serialization.
 """
 
-from typing import List, Dict, Any, Union
 from fastapi import APIRouter
 from pydantic import BaseModel
 
