@@ -9,8 +9,8 @@ The application can be started by running this module with a WSGI server like Uv
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
-from app.routes import router  # Use relative import
-from app.config import custom_openapi  # Use relative import
+from app.routes import router 
+from app.config import custom_openapi 
 
 # Initialize FastAPI app
 app = FastAPI(
