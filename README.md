@@ -1,4 +1,4 @@
-gcloud auth application-default login
+gcloud auth login
 gcloud auth list
 gcloud config set account zachary.gander@prophetfrom.ai
 gcloud projects list
