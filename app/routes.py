@@ -46,13 +46,6 @@ items = [
 # Define routes
 
 
-@router.get("/", response_model=HelloWorldResponse)
-def hello_world():
-    """
-    Endpoint to return a simple hello world message.
-    """
-    return {"message": "OK"}
-
 @router.get("/items")
 def get_item():
     """
