@@ -1,13 +1,6 @@
 """
 This module defines API routes for the 'shop' service.
 
-It includes endpoints for:
-- Retrieving a hello world message
-- Retrieving all items
-- Creating a new item
-- Updating an existing item
-- Deleting an item
-
 Pydantic models are used for data validation and serialization.
 """
 
