@@ -9,7 +9,8 @@
 				"redhat.vscode-yaml",
 				"ms-python.pylint",
 				"eeyore.yapf",
-				"ms-python.vscode-pylance"
+				"ms-python.vscode-pylance",
+				"ms-python.black-formatter" // Added Black formatter
 			]
 		}
 	},
@@ -17,7 +18,7 @@
 		"ghcr.io/dhoeric/features/google-cloud-cli:1": {}
 	},
 	// "forwardPorts": [8080],
-	"postCreateCommand": "pip install --upgrade pip && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt",
+	"postCreateCommand": "pip install --upgrade pip && python3 -m venv venv && ./venv/bin/pip install -r requirements.txt"
 	// "mounts": [
 	// 	"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind"
 	// ]
