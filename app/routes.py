@@ -18,25 +18,6 @@ from pydantic import BaseModel
 # Create a router instance with a prefix and tags for grouping
 router = APIRouter(prefix="/shop", tags=["shop"])
 
-
-# Define the Pydantic model
-class RequestDetails(BaseModel):
-    message: str
-    headers: Dict[str, str]
-    query_params: Dict[str, str]
-    method: str
-    client_ip: str
-    cookies: Dict[str, str]
-    url_path: str
-    full_url: str
-    scheme: str
-    http_version: str
-    scope: Dict[str, Any]  # Scope may contain complex data, we'll filter this
-    items: List[Dict[str,
-                     Union[str,
-                           int]]]  # Adjust for items that could be int or str
-
-
 class HelloWorldResponse(BaseModel):
     """Model for a hello world response message."""
     message: str
