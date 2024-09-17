@@ -81,46 +81,13 @@ def hello_world():
     """
     return {"message": "OK"}
 
+@router.get("/items")
+def get_item():
+    """
+    Endpoint to create a new item.
+    """
 
-# Define the FastAPI route to return this response
-@router.get("/request-details", response_model=RequestDetails)
-async def get_request_details(request: Request):
-    headers = {k: v for k, v in request.headers.items()}
-    query_params = dict(request.query_params)
-    method = request.method
-    client_ip = request.client.host
-    cookies = request.cookies
-    url_path = request.url.path
-    full_url = str(request.url)
-    scheme = request.url.scheme
-    http_version = request.scope.get("http_version")
-
-    # Filter out non-serializable objects like FastAPI instances, APIRouter, and function types
-    scope = {
-        key:
-        str(value) if isinstance(value,
-                                 (tuple, dict, list, str, int)) else None
-        for key, value in request.scope.items()
-        if not isinstance(value, (FastAPI, APIRouter, type, types.FunctionType
-                                  ))  # Exclude functions and internal objects
-    }
-
-    # Items example
-    items = [{"id": 1}, {"id": 2}]  # Replace with actual items logic
-
-    return RequestDetails(message="Request details",
-                          headers=headers,
-                          query_params=query_params,
-                          method=method,
-                          client_ip=client_ip,
-                          cookies=cookies,
-                          url_path=url_path,
-                          full_url=full_url,
-                          scheme=scheme,
-                          http_version=http_version,
-                          scope=scope,
-                          items=items)
-
+    return items
 
 @router.post("/items", response_model=Item)
 def create_item(item: ItemCreateRequest):
