@@ -12,9 +12,8 @@ Pydantic models are used for data validation and serialization.
 """
 
 from typing import List, Dict, Any, Union
-from fastapi import APIRouter, Request, FastAPI
+from fastapi import APIRouter
 from pydantic import BaseModel
-import types
 
 # Create a router instance with a prefix and tags for grouping
 router = APIRouter(prefix="/shop", tags=["shop"])
