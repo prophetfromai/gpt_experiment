@@ -4,13 +4,9 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				"ms-azuretools.vscode-docker",
 				"ms-python.python",
-				"redhat.vscode-yaml",
-				"ms-python.pylint",
-				"eeyore.yapf",
 				"ms-python.vscode-pylance",
-				"ms-python.black-formatter" // Added Black formatter
+				"ms-python.black-formatter"
 			]
 		}
 	},
