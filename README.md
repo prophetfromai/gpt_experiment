@@ -12,8 +12,6 @@ gcloud builds submit --config cloudbuild.yaml .
 # Reference Dockerfile
 # https://github.com/GoogleContainerTools/distroless/blob/main/examples/python3-requirements/Dockerfile
 
-python -m app.main
-
 # From the app folder:
 find . -name "*.py" -exec yapf -i {} \;
 find . -name "*.py" | xargs pylint
