@@ -22,17 +22,19 @@ steps:
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push', 'gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID']
 
-  # Step 3: Deploy the Docker image to Google Cloud Run
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'bash'
+# Step 3: Deploy the Docker image to Google Cloud Run
+  - name: 'gcr.io/cloud-builders/gcloud'
     args:
-      - '-c'
-      - |
-        gcloud run deploy ${_APP_NAME} \
-          --image gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID \
-          --platform managed \
-          --region ${_REGION} \
-          --allow-unauthenticated
+      - 'run'
+      - 'deploy'
+      - '${_APP_NAME}'
+      - '--image'
+      - 'gcr.io/$PROJECT_ID/${_APP_NAME}:$BUILD_ID'
+      - '--platform'
+      - 'managed'
+      - '--region'
+      - '${_REGION}'
+      - '--allow-unauthenticated'
 
   # Step 4: Update the environment variable using the canonical service URL directly
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
