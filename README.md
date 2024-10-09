@@ -3,9 +3,8 @@ gcloud auth login
 gcloud auth list
 gcloud config set account zachary.gander@prophetfrom.ai
 gcloud projects list
-gcloud projects create [PROJECT_ID] --name="[PROJECT_NAME]"
-gcloud config set project
-gcloud config set project zac-test-1
+gcloud projects create my-test-project-fastapi --name="my-test-project-fastapi"
+gcloud config set project my-test-project-fastapi
 gcloud builds submit --config cloudbuild.yaml .
 
 # Manually update to allow unauthenticated requests in the portal or add permissions from the command line
