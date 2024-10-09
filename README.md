@@ -3,6 +3,7 @@ gcloud auth login
 gcloud auth list
 gcloud config set account zachary.gander@prophetfrom.ai
 gcloud projects list
+gcloud projects create [PROJECT_ID] --name="[PROJECT_NAME]"
 gcloud config set project
 gcloud config set project zac-test-1
 gcloud builds submit --config cloudbuild.yaml .
