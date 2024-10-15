@@ -84,3 +84,12 @@ def delete_item(item_id: int):
     global items  # pylint: disable=global-statement
     items = [item for item in items if item["id"] != item_id]
     return {"message": "Item deleted"}
+
+
+@router.get("/testcommit")
+def get_item():
+    """
+    Endpoint to create a new item.
+    """
+
+    return 'test'
