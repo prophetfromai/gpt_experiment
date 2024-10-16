@@ -86,10 +86,10 @@ def delete_item(item_id: int):
     return {"message": "Item deleted"}
 
 
-@router.get("/testcommit")
+@router.get("/testdemo")
 def get_item():
     """
     Endpoint to create a new item.
     """
 
-    return 'test'
+    return 'this happened automatically woop'
