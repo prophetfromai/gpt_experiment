@@ -8,7 +8,7 @@ The application can be started by running this module with a WSGI server like Uv
 """
 
 from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi.responses import RedirectResponse, PlainTextResponse
 from app.routes import router 
 from app.config import custom_openapi 
 
@@ -32,3 +32,20 @@ async def redirect_to_docs():
     Redirects the base URL to the API documentation.
     """
     return RedirectResponse(url="/docs")
+
+
+# Define privacy policy route
+@app.get("/privacy", include_in_schema=False)
+async def privacy_policy():
+    """
+    Returns a basic privacy policy.
+    """
+    policy_text = """
+    Privacy Policy
+
+    Your privacy is important to us. This privacy policy explains how we collect, use, and protect your personal information. 
+    We do not sell or share your personal information with third parties.
+
+    If you have any questions or concerns, please contact us at privacy@example.com.
+    """
+    return PlainTextResponse(policy_text)
